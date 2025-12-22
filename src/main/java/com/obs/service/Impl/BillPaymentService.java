@@ -17,7 +17,7 @@ import com.obs.repository.BillPaymentRepository;
 import com.obs.repository.UserRepository;
 
 @Service
-public class IBillPaymentService implements com.obs.service.Interfaces.IBillPaymentService {
+public class BillPaymentService implements com.obs.service.Interfaces.IBillPaymentService {
 
     @Autowired
     private BillPaymentRepository billPaymentRepository;
