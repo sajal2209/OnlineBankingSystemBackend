@@ -1,18 +1,19 @@
 package com.obs.service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.obs.entity.Account;
 import com.obs.entity.AccountType;
 import com.obs.entity.Transaction;
 import com.obs.payload.request.TransferRequest;
 import com.obs.repository.AccountRepository;
 import com.obs.repository.TransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class TransactionService {
@@ -34,6 +35,10 @@ public class TransactionService {
 
         Account toAccount = accountRepository.findByAccountNumber(transferRequest.getToAccountNumber())
                 .orElseThrow(() -> new IllegalArgumentException("Target account not found"));
+
+        if (fromAccount.getAccountNumber().equals(toAccount.getAccountNumber())) {
+            throw new IllegalArgumentException("Cannot transfer funds to the same account");
+        }
 
         if (!fromAccount.isActive()) {
             throw new IllegalArgumentException("Source account is frozen/inactive");
@@ -61,7 +66,7 @@ public class TransactionService {
             transaction.setType("DEBIT");
             transaction.setTimestamp(LocalDateTime.now());
             transaction.setTargetAccountNumber(toAccount.getAccountNumber());
-            transaction.setDescription("Transfer to " + toAccount.getAccountNumber() + " (PENDING APPROVAL)");
+            transaction.setDescription("Transfer to " + toAccount.getUser().getUsername() + " (PENDING APPROVAL)");
             transaction.setStatus("PENDING");
             transactionRepository.save(transaction);
 
@@ -153,6 +158,7 @@ public class TransactionService {
         accountRepository.save(fromAccount);
         
         transaction.setStatus("REJECTED");
+        transaction.setDescription(transaction.getDescription().replace(" (PENDING APPROVAL)", " (REJECTED)"));
         transactionRepository.save(transaction);
     }
 
@@ -186,6 +192,10 @@ public class TransactionService {
     public void executeRecurringTransfer(Account fromAccount, String targetAccountNumber, BigDecimal amount) {
         Account toAccount = accountRepository.findByAccountNumber(targetAccountNumber)
                 .orElseThrow(() -> new IllegalArgumentException("Target account not found"));
+
+        if (fromAccount.getAccountNumber().equals(toAccount.getAccountNumber())) {
+            throw new IllegalArgumentException("Cannot transfer funds to the same account");
+        }
 
         if (!fromAccount.isActive()) {
             throw new IllegalArgumentException("Source account is frozen/inactive");
