@@ -2,6 +2,7 @@ package com.obs.payload.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class UpdateUserRequest {
@@ -15,7 +16,8 @@ public class UpdateUserRequest {
     private String email;
 
     @NotBlank
-    @Size(min = 10, max = 15)
+    @Size(min = 10)
+    @Pattern(regexp = "^[6-9][0-9]{9}$", message = "Phone number must be a valid 10-digit number starting with 7, 8, or 9")
     private String phoneNumber;
 
     public String getFullName() {
