@@ -1,9 +1,11 @@
-package com.obs.service;
+package com.obs.service.Impl;
 
 import com.obs.entity.Account;
 import com.obs.entity.RecurringPayment;
 import com.obs.repository.AccountRepository;
 import com.obs.repository.RecurringPaymentRepository;
+import com.obs.service.Interfaces.IRecurringPaymentService;
+import com.obs.service.Interfaces.ITransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class RecurringPaymentService {
+public class RecurringPaymentService implements IRecurringPaymentService {
 
     @Autowired
     private RecurringPaymentRepository recurringPaymentRepository;
@@ -24,7 +26,7 @@ public class RecurringPaymentService {
     private AccountRepository accountRepository;
 
     @Autowired
-    private TransactionService transactionService;
+    private ITransactionService transactionService;
 
     public RecurringPayment createRecurringPayment(String accountNumber, BigDecimal amount, String targetAccountNumber, String frequency, LocalDate startDate, LocalDate endDate) {
         Account account = accountRepository.findByAccountNumber(accountNumber)
