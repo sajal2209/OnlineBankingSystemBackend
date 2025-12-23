@@ -53,7 +53,7 @@ public class TransactionService implements ITransactionService {
             throw new IllegalArgumentException("Insufficient balance");
         }
 
-        BigDecimal transferLimit = new BigDecimal("10000");
+        BigDecimal transferLimit = new BigDecimal("100000");
 
         if (transferRequest.getAmount().compareTo(transferLimit) > 0 && fromAccount.getAccountType() != AccountType.CURRENT) {
             // High value transaction - HOLD funds and mark PENDING
