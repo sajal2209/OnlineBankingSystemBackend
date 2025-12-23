@@ -1,4 +1,4 @@
-package com.obs.service;
+package com.obs.service.Impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ import com.obs.repository.BillPaymentRepository;
 import com.obs.repository.UserRepository;
 
 @Service
-public class BillPaymentService {
+public class BillPaymentService implements com.obs.service.Interfaces.IBillPaymentService {
 
     @Autowired
     private BillPaymentRepository billPaymentRepository;
