@@ -47,11 +47,7 @@ public class RecurringPaymentService implements IRecurringPaymentService {
     }
 
     public List<RecurringPayment> getRecurringPayments(String username) {
-        // In a real app we'd filter by username more strictly via Repo, but here we can filter by account
-         // Or getting all accounts for user and then all payments.
-         // Let's assume passed account number in controller or just return empty for simplicty if not managed
-         // Impl: Controller will usually pass Account Number or User. 
-         // Let's implement finding by Account
+
          return List.of(); // Placeholder, actual impl in Controller
     }
     
