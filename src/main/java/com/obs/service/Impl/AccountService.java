@@ -11,6 +11,7 @@ import com.obs.payload.response.AccountDetailsResponse;
 import com.obs.repository.AccountRepository;
 import com.obs.repository.TransactionRepository;
 
+import com.obs.repository.UserRepository;
 import com.obs.service.Interfaces.IAccountService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AccountService implements IAccountService {
@@ -26,13 +28,15 @@ public class AccountService implements IAccountService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     public AccountService(AccountRepository accountRepository,
                               TransactionRepository transactionRepository,
-                              UserService userService) {
+                              UserService userService,UserRepository userRepository) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -44,7 +48,24 @@ public class AccountService implements IAccountService {
 
     @Override
     @Transactional
-    public Account createAccount(CreateAccountRequest request, String username) {
+    public Account createAccount(CreateAccountRequest request, String username)
+    {
+        User user1 = userRepository.findByUsername(username).orElseThrow(()->new RuntimeException("user not found"));
+        String requestPan = request.getPanCardNumber();
+        if(user1.getPanNumber()==null)
+        {
+            if (userRepository.existsBypanCardNumber(requestPan))
+            {
+                throw  new IllegalArgumentException("PAN already linked to another customer");
+            }
+            user1.setPanNumber(requestPan);
+            userRepository.save(user1);
+        }
+        else {
+            if(!user1.getPanNumber().equals(requestPan)){
+                throw new IllegalArgumentException("customer can use only one pan number for all accounts");
+            }
+        }
         User user = userService.getByUsername(username);
 
         // Validate CURRENT account fields
@@ -59,7 +80,7 @@ public class AccountService implements IAccountService {
         account.setBalance(BigDecimal.ZERO);
         account.setUser(user);
         account.setAccountNumber(generateAccountNumber());
-        account.setPanCardNumber(request.getPanCardNumber());
+//        account.setPanCardNumber(request.getPanCardNumber());
 
         if (request.getAccountType() == AccountType.CURRENT) {
             account.setBusinessName(request.getBusinessName());
