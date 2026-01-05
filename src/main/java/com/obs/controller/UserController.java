@@ -19,7 +19,6 @@ public class UserController {
 
     private final IUserService userService;
 
-    // Constructor injection
     public UserController(IUserService userService) {
         this.userService = userService;
     }

@@ -123,7 +123,6 @@ public class TransactionService implements ITransactionService {
              throw new IllegalArgumentException("Target account is frozen/inactive");
         }
         
-        // Funds were already deducted from source. Now add to target.
         toAccount.setBalance(toAccount.getBalance().add(transaction.getAmount().abs()));
         accountRepository.save(toAccount);
         
@@ -131,7 +130,6 @@ public class TransactionService implements ITransactionService {
         transaction.setDescription(transaction.getDescription().replace(" (PENDING APPROVAL)", ""));
         transactionRepository.save(transaction);
         
-        // Create Credit Record for Receiver
         Transaction creditTransaction = new Transaction();
         creditTransaction.setAccount(toAccount);
         creditTransaction.setAmount(transaction.getAmount().abs());
@@ -154,7 +152,6 @@ public class TransactionService implements ITransactionService {
         
         Account fromAccount = transaction.getAccount();
         
-        // Refund source account
         fromAccount.setBalance(fromAccount.getBalance().add(transaction.getAmount().abs()));
         accountRepository.save(fromAccount);
         
@@ -164,11 +161,7 @@ public class TransactionService implements ITransactionService {
     }
 
     public List<Transaction> getPendingTransactions() {
-        // This is a simplified way. Ideally we should have a custom query.
-        // Since we don't have a status based query in repo, let's filter all or add method to repo.
-        // Let's add method to repo first (implicit step in next tool call? or just filter here if list is small, better to add to repo)
-        // I'll add to Repo in next step, for now I will assume it exists or use findAll and filter
-        return transactionRepository.findAll().stream()
+                return transactionRepository.findAll().stream()
                 .filter(t -> "PENDING".equals(t.getStatus()))
                 .toList();
     }

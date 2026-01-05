@@ -23,7 +23,6 @@ public class BankerController {
     private final IAccountService accountService;
     private final IPdfGenerationService pdfGenerationService;
 
-    // ✅ Constructor injection (clean & testable)
     public BankerController(ITransactionService transactionService,
                             IAccountService accountService,
                             IPdfGenerationService pdfGenerationService) {

@@ -51,7 +51,6 @@ public class PdfGenerationService implements IPdfGenerationService {
             Table table = new Table(UnitValue.createPercentArray(columnWidths));
             table.setWidth(UnitValue.createPercentValue(100));
 
-            // Add a border to the table if desired, or keep it clean
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a");
 
@@ -144,6 +143,5 @@ public class PdfGenerationService implements IPdfGenerationService {
     private void addTableRow(Table table, String label, String value) {
         table.addCell(new Cell().add(new Paragraph(label).setBold()).setBorder(com.itextpdf.layout.borders.Border.NO_BORDER));
         table.addCell(new Cell().add(new Paragraph(value)).setBorder(com.itextpdf.layout.borders.Border.NO_BORDER));
-        // Add a separator line if you want, or just spacing
     }
 }

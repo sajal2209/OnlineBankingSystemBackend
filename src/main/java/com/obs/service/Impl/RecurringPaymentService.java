@@ -109,7 +109,7 @@ public class RecurringPaymentService implements IRecurringPaymentService {
                  
              } catch (Exception e) {
                  System.err.println("Failed to process recurring payment " + payment.getId() + ": " + e.getMessage());
-                 // Optionally disable payment or retry later
+
              }
         }
     }

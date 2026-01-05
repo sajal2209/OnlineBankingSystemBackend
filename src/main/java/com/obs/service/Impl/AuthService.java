@@ -76,7 +76,6 @@ public class AuthService implements IAuthService {
             throw new ConflictException("Email is already in use!");
         }
 
-        // Delegate user creation to UserService (encodes password internally)
         User user = new User();
         user.setUsername(signUpRequest.getUsername());
         user.setEmail(signUpRequest.getEmail());
@@ -85,7 +84,6 @@ public class AuthService implements IAuthService {
         user.setFullName(signUpRequest.getFullName());
         user.setActive(true);
 
-        // Map roles
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
         if (strRoles == null || strRoles.isEmpty()) {

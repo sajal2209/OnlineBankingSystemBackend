@@ -47,11 +47,9 @@ public class BillPaymentService implements com.obs.service.Interfaces.IBillPayme
             throw new IllegalArgumentException("Insufficient balance");
         }
 
-        // Deduct balance
         account.setBalance(account.getBalance().subtract(amount));
         accountRepository.save(account);
 
-        // Record Bill Payment
         BillPayment billPayment = new BillPayment();
         billPayment.setBillerName(billerName);
         billPayment.setAmount(amount);
@@ -61,7 +59,6 @@ public class BillPaymentService implements com.obs.service.Interfaces.IBillPayme
 
         billPaymentRepository.save(billPayment);
 
-        // Record Transaction
         Transaction transaction = new Transaction();
         transaction.setAccount(account);
         transaction.setAmount(amount.negate()); // Debit

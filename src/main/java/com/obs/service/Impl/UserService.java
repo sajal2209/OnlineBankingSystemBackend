@@ -94,8 +94,7 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public User saveNewUser(User user) {
-        // If the password is not encoded, encode it
-        // (A simple heuristic: bcrypt hashes start with $2a/$2b/$2y)
+
         String pwd = user.getPassword();
         if (pwd == null || !pwd.startsWith("$2")) {
             user.setPassword(encoder.encode(pwd));
@@ -118,7 +117,6 @@ public class UserService implements IUserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Error: User not found."));
 
-        // If email will change, ensure uniqueness
         if (!user.getEmail().equals(updateRequest.getEmail())) {
             if (userRepository.existsByEmail(updateRequest.getEmail())) {
                 throw new ConflictException("Error: Email is already in use!");

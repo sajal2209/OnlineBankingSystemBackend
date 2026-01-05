@@ -47,7 +47,6 @@ public class AccountService implements IAccountService {
     public Account createAccount(CreateAccountRequest request, String username) {
         User user = userService.getByUsername(username);
 
-        // Validate CURRENT account fields
         if (request.getAccountType() == AccountType.CURRENT) {
             if (isBlank(request.getBusinessName()) || isBlank(request.getBusinessAddress())) {
                 throw new IllegalArgumentException("Business Name and Address are required for Current Account.");
@@ -106,11 +105,9 @@ public class AccountService implements IAccountService {
             throw new IllegalArgumentException("Cannot deposit to frozen/inactive account");
         }
 
-        // Update balance
         account.setBalance(account.getBalance().add(amount));
         accountRepository.save(account);
 
-        // Record Transaction (CREDIT)
         Transaction transaction = new Transaction();
         transaction.setAccount(account);
         transaction.setAmount(amount); // positive for credit
@@ -123,16 +120,11 @@ public class AccountService implements IAccountService {
         return account.getBalance();
     }
 
-    // --- Helpers ---
-
     private boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
     }
 
-    /**
-     * Generates a 16-digit account number starting with 1000 (e.g., 1000XXXXXXXXXXXX).
-     * Uses SecureRandom to avoid predictability.
-     */
+
     private String generateAccountNumber() {
         SecureRandom rand = new SecureRandom();
         StringBuilder sb = new StringBuilder("1000");
