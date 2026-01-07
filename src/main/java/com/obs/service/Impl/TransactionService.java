@@ -7,6 +7,7 @@ import java.util.List;
 import com.obs.service.Interfaces.ITransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.obs.entity.Account;
@@ -182,7 +183,7 @@ public class TransactionService implements ITransactionService {
                 .orElseThrow(() -> new RuntimeException("Transaction not found"));
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void executeRecurringTransfer(Account fromAccount, String targetAccountNumber, BigDecimal amount) {
         Account toAccount = accountRepository.findByAccountNumber(targetAccountNumber)
                 .orElseThrow(() -> new IllegalArgumentException("Target account not found"));
@@ -215,7 +216,7 @@ public class TransactionService implements ITransactionService {
         debitTransaction.setType("DEBIT");
         debitTransaction.setTimestamp(LocalDateTime.now());
         debitTransaction.setTargetAccountNumber(toAccount.getAccountNumber());
-        debitTransaction.setDescription("Recurring Transfer to " + toAccount.getAccountNumber());
+        debitTransaction.setDescription("Recurring Transfer to " + toAccount.getUser().getUsername());
         debitTransaction.setStatus("SUCCESS");
         transactionRepository.save(debitTransaction);
 
