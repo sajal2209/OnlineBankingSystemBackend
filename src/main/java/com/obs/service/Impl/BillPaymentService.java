@@ -1,4 +1,4 @@
-package com.obs.service;
+package com.obs.service.Impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ import com.obs.repository.BillPaymentRepository;
 import com.obs.repository.UserRepository;
 
 @Service
-public class BillPaymentService {
+public class BillPaymentService implements com.obs.service.Interfaces.IBillPaymentService {
 
     @Autowired
     private BillPaymentRepository billPaymentRepository;
@@ -47,11 +47,9 @@ public class BillPaymentService {
             throw new IllegalArgumentException("Insufficient balance");
         }
 
-        // Deduct balance
         account.setBalance(account.getBalance().subtract(amount));
         accountRepository.save(account);
 
-        // Record Bill Payment
         BillPayment billPayment = new BillPayment();
         billPayment.setBillerName(billerName);
         billPayment.setAmount(amount);
@@ -61,7 +59,6 @@ public class BillPaymentService {
 
         billPaymentRepository.save(billPayment);
 
-        // Record Transaction
         Transaction transaction = new Transaction();
         transaction.setAccount(account);
         transaction.setAmount(amount.negate()); // Debit

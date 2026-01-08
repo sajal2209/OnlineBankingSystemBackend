@@ -3,7 +3,8 @@ package com.obs.controller;
 import com.obs.entity.RecurringPayment;
 import com.obs.payload.request.RecurringPaymentRequest;
 import com.obs.payload.response.MessageResponse;
-import com.obs.service.RecurringPaymentService;
+
+import com.obs.service.Interfaces.IRecurringPaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,7 +19,7 @@ import java.util.List;
 public class RecurringPaymentController {
 
     @Autowired
-    private RecurringPaymentService recurringPaymentService;
+    private IRecurringPaymentService recurringPaymentService;
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('CUSTOMER')")

@@ -1,8 +1,9 @@
-package com.obs.service;
+package com.obs.service.Impl;
 
 import java.io.ByteArrayOutputStream;
 import java.time.format.DateTimeFormatter;
 
+import com.obs.service.Interfaces.IPdfGenerationService;
 import org.springframework.stereotype.Service;
 
 import com.itextpdf.io.font.PdfEncodings;
@@ -20,7 +21,7 @@ import com.obs.entity.Account;
 import com.obs.entity.Transaction;
 
 @Service
-public class PdfGenerationService {
+public class PdfGenerationService implements IPdfGenerationService {
 
     public byte[] generateTransactionInvoice(Transaction transaction) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -50,7 +51,6 @@ public class PdfGenerationService {
             Table table = new Table(UnitValue.createPercentArray(columnWidths));
             table.setWidth(UnitValue.createPercentValue(100));
 
-            // Add a border to the table if desired, or keep it clean
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a");
 
@@ -143,6 +143,5 @@ public class PdfGenerationService {
     private void addTableRow(Table table, String label, String value) {
         table.addCell(new Cell().add(new Paragraph(label).setBold()).setBorder(com.itextpdf.layout.borders.Border.NO_BORDER));
         table.addCell(new Cell().add(new Paragraph(value)).setBorder(com.itextpdf.layout.borders.Border.NO_BORDER));
-        // Add a separator line if you want, or just spacing
     }
 }

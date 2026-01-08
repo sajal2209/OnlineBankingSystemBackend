@@ -43,11 +43,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                // Sliding Window Expiration:
-                // Check if token is expiring in less than 5 minutes (300000ms). If so, refresh it.
-                // Or simply refresh on every request to keep session alive max time.
-                // Let's refresh if < 50% of time remains or just generally close to expiry to avoid spamming headers.
-                // For simplicity and user requirement "if active do not logout", refreshing if < 10 mins remains seems good for 15 min expiry.
 
                 java.util.Date expiration = jwtUtils.getExpirationDateFromJwtToken(jwt);
                 long timeRemaining = expiration.getTime() - System.currentTimeMillis();

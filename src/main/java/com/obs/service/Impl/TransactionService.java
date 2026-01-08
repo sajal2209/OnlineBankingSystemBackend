@@ -1,11 +1,13 @@
-package com.obs.service;
+package com.obs.service.Impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.obs.service.Interfaces.ITransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.obs.entity.Account;
@@ -16,7 +18,7 @@ import com.obs.repository.AccountRepository;
 import com.obs.repository.TransactionRepository;
 
 @Service
-public class TransactionService {
+public class TransactionService implements ITransactionService {
 
     @Autowired
     private AccountRepository accountRepository;
@@ -52,7 +54,7 @@ public class TransactionService {
             throw new IllegalArgumentException("Insufficient balance");
         }
 
-        BigDecimal transferLimit = new BigDecimal("10000");
+        BigDecimal transferLimit = new BigDecimal("100000");
 
         if (transferRequest.getAmount().compareTo(transferLimit) > 0 && fromAccount.getAccountType() != AccountType.CURRENT) {
             // High value transaction - HOLD funds and mark PENDING
@@ -122,7 +124,6 @@ public class TransactionService {
              throw new IllegalArgumentException("Target account is frozen/inactive");
         }
         
-        // Funds were already deducted from source. Now add to target.
         toAccount.setBalance(toAccount.getBalance().add(transaction.getAmount().abs()));
         accountRepository.save(toAccount);
         
@@ -130,7 +131,6 @@ public class TransactionService {
         transaction.setDescription(transaction.getDescription().replace(" (PENDING APPROVAL)", ""));
         transactionRepository.save(transaction);
         
-        // Create Credit Record for Receiver
         Transaction creditTransaction = new Transaction();
         creditTransaction.setAccount(toAccount);
         creditTransaction.setAmount(transaction.getAmount().abs());
@@ -153,7 +153,6 @@ public class TransactionService {
         
         Account fromAccount = transaction.getAccount();
         
-        // Refund source account
         fromAccount.setBalance(fromAccount.getBalance().add(transaction.getAmount().abs()));
         accountRepository.save(fromAccount);
         
@@ -163,11 +162,7 @@ public class TransactionService {
     }
 
     public List<Transaction> getPendingTransactions() {
-        // This is a simplified way. Ideally we should have a custom query.
-        // Since we don't have a status based query in repo, let's filter all or add method to repo.
-        // Let's add method to repo first (implicit step in next tool call? or just filter here if list is small, better to add to repo)
-        // I'll add to Repo in next step, for now I will assume it exists or use findAll and filter
-        return transactionRepository.findAll().stream()
+                return transactionRepository.findAll().stream()
                 .filter(t -> "PENDING".equals(t.getStatus()))
                 .toList();
     }
@@ -188,7 +183,7 @@ public class TransactionService {
                 .orElseThrow(() -> new RuntimeException("Transaction not found"));
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void executeRecurringTransfer(Account fromAccount, String targetAccountNumber, BigDecimal amount) {
         Account toAccount = accountRepository.findByAccountNumber(targetAccountNumber)
                 .orElseThrow(() -> new IllegalArgumentException("Target account not found"));
@@ -221,7 +216,7 @@ public class TransactionService {
         debitTransaction.setType("DEBIT");
         debitTransaction.setTimestamp(LocalDateTime.now());
         debitTransaction.setTargetAccountNumber(toAccount.getAccountNumber());
-        debitTransaction.setDescription("Recurring Transfer to " + toAccount.getAccountNumber());
+        debitTransaction.setDescription("Recurring Transfer to " + toAccount.getUser().getUsername());
         debitTransaction.setStatus("SUCCESS");
         transactionRepository.save(debitTransaction);
 
