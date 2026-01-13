@@ -21,7 +21,7 @@ import java.util.List;
 public class AdminController {
 
     @Autowired
-    private  IUserService userService;
+    private IUserService userService;
 
     @Autowired
     private ITransactionService transactionService;
@@ -42,8 +42,10 @@ public class AdminController {
     @PutMapping("/users/{id}/toggle-active")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> toggleUserActive(@PathVariable Long id) {
-        userService.toggleUserActive(id);
-        return ResponseEntity.ok(new MessageResponse("User activation status updated successfully!"));
+        boolean isActive = userService.toggleUserActive(id);
+        String message = isActive ? "User account has been successfully ACTIVATED."
+                : "User account has been successfully DEACTIVATED.";
+        return ResponseEntity.ok(new MessageResponse(message));
     }
 
     @GetMapping("/pending-transactions")

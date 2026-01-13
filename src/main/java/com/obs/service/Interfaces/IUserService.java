@@ -19,7 +19,8 @@ public interface IUserService {
     boolean existsByEmail(String email);
     User createBanker(SignupRequest signUpRequest);
     List<User> getAllNonAdminUsers();
-    void toggleUserActive(Long id);
+
+    boolean toggleUserActive(Long id);
 
     User saveNewUser(User user);
 

@@ -83,11 +83,12 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public void toggleUserActive(Long id) {
+    public boolean toggleUserActive(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setActive(!user.isActive());
         userRepository.save(user);
+        return user.isActive();
     }
 
 
