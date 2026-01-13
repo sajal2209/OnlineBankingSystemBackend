@@ -5,8 +5,8 @@ COPY . .
 RUN gradle bootJar --no-daemon
 
 # Run Stage
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jdk-alpine
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar app.jar
-EXPOSE 8080
+COPY --from=build /app/build/libs/*-SNAPSHOT.jar app.jar
+EXPOSE 8443
 ENTRYPOINT ["java", "-jar", "app.jar"]
