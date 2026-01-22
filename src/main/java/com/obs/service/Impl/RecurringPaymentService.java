@@ -28,6 +28,7 @@ public class RecurringPaymentService implements IRecurringPaymentService {
     @Autowired
     private ITransactionService transactionService;
 
+    @Override
     @Transactional
     public RecurringPayment createRecurringPayment(String accountNumber, BigDecimal amount, String targetAccountNumber,
             String frequency, LocalDate startDate, LocalDate endDate) {
@@ -70,17 +71,7 @@ public class RecurringPaymentService implements IRecurringPaymentService {
         return savedPayment;
     }
 
-    public List<RecurringPayment> getRecurringPayments(String username) {
-        // In a real app we'd filter by username more strictly via Repo, but here we can
-        // filter by account
-        // Or getting all accounts for user and then all payments.
-        // Let's assume passed account number in controller or just return empty for
-        // simplicty if not managed
-        // Impl: Controller will usually pass Account Number or User.
-        // Let's implement finding by Account
-        return List.of(); // Placeholder, actual impl in Controller
-    }
-
+    @Override
     public List<RecurringPayment> getRecurringPaymentsByAccount(String accountNumber, String username) {
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
@@ -92,6 +83,7 @@ public class RecurringPaymentService implements IRecurringPaymentService {
         return recurringPaymentRepository.findByAccount(account);
     }
 
+    @Override
     public void stopRecurringPayment(Long id, String username) {
         RecurringPayment payment = recurringPaymentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Payment not found"));
@@ -104,7 +96,7 @@ public class RecurringPaymentService implements IRecurringPaymentService {
         recurringPaymentRepository.save(payment);
     }
 
-    @Scheduled(cron = "0 0 12 * * ?") // Every day at 12 PM
+    @Scheduled(cron = "0 30 6 * * ?") // 12:00 PM IST (6:30 AM UTC)
     @Transactional
     public void processRecurringPayments() {
         LocalDate today = LocalDate.now();

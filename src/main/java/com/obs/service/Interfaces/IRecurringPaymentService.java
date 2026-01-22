@@ -20,12 +20,6 @@ public interface IRecurringPaymentService {
 
     List<RecurringPayment> getRecurringPaymentsByAccount(String accountNumber, String username);
 
-
-    List<RecurringPayment> getRecurringPayments(String username);
-
-
     void stopRecurringPayment(Long id, String username);
-
-    void processRecurringPayments();
 
 }
