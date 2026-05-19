@@ -21,14 +21,12 @@ public class RecurringPayment {
 
     private String targetAccountNumber;
 
-    // DAILY, WEEKLY, MONTHLY
     private String frequency;
 
     private LocalDate startDate; 
     private LocalDate endDate;   
     private LocalDate nextPaymentDate; 
 
-    // ACTIVE, STOPPED, COMPLETED
     private String status;
 
     private LocalDateTime createdAt;

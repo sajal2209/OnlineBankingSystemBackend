@@ -2,6 +2,8 @@ package com.obs.payload.request;
 
 import jakarta.validation.constraints.NotBlank;
 import com.obs.entity.AccountType;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public class CreateAccountRequest {
     private AccountType accountType;
@@ -10,7 +12,7 @@ public class CreateAccountRequest {
 
     private String businessAddress;
 
-    @NotBlank
+    @NotBlank(message = "PAN Card Number is required")
     private String panCardNumber;
 
     public AccountType getAccountType() {

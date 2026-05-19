@@ -25,7 +25,7 @@ public class Account {
 
     private String businessAddress;
 
-    private String panCardNumber;
+//    private String panCardNumber;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -107,11 +107,11 @@ public class Account {
         this.businessAddress = businessAddress;
     }
 
-    public String getPanCardNumber() {
-        return panCardNumber;
-    }
-
-    public void setPanCardNumber(String panCardNumber) {
-        this.panCardNumber = panCardNumber;
-    }
+//    public String getPanCardNumber() {
+//        return panCardNumber;
+//    }
+//
+//    public void setPanCardNumber(String panCardNumber) {
+//        this.panCardNumber = panCardNumber;
+//    }
 }

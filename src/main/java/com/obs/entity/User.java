@@ -39,6 +39,16 @@ public class User {
 
     @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean active = true;
+    @Column(unique = true)
+    private String panCardNumber;
+
+    public String getPanNumber() {
+        return panCardNumber;
+    }
+
+    public void setPanNumber(String panCardNumber) {
+        this.panCardNumber = panCardNumber;
+    }
 
     public boolean isActive() {
         return active;

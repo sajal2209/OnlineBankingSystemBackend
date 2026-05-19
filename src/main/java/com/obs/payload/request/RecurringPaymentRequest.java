@@ -7,20 +7,24 @@ import java.time.LocalDate;
 
 public class RecurringPaymentRequest {
     @NotBlank
+    @jakarta.validation.constraints.Size(min = 16, max = 16, message = "Account number must be 16 digits")
+    @jakarta.validation.constraints.Pattern(regexp = "\\d+", message = "Account number must contain only digits")
     private String fromAccountNumber;
-    
+
     @NotNull
     private BigDecimal amount;
-    
+
     @NotBlank
+    @jakarta.validation.constraints.Size(min = 16, max = 16, message = "Target account number must be 16 digits")
+    @jakarta.validation.constraints.Pattern(regexp = "\\d+", message = "Target account number must contain only digits")
     private String targetAccountNumber;
-    
+
     @NotBlank
     private String frequency; // DAILY, WEEKLY, MONTHLY
-    
+
     @NotNull
     private LocalDate startDate;
-    
+
     private LocalDate endDate;
 
     public String getFromAccountNumber() {
